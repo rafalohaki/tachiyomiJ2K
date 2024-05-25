@@ -75,7 +75,7 @@ class MigrationListController(bundle: Bundle? = null) :
 
     override val coroutineContext: CoroutineContext = Job() + Dispatchers.Default
 
-    val config: MigrationProcedureConfig? = args.getParcelable(CONFIG_EXTRA)
+    val config: MigrationProcedureConfig? = args?.getParcelable(CONFIG_EXTRA)
 
     private val db: DatabaseHelper by injectLazy()
     private val preferences: PreferencesHelper by injectLazy()

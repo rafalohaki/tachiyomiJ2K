@@ -38,8 +38,14 @@ class MigrationSourceAdapter(
         val sourceManager: SourceManager by injectLazy()
         savedInstanceState.getParcelableArrayList<MigrationSourceItem.ParcelableSI>(
             SELECTED_SOURCES_KEY,
-        )?.let {
-            updateDataSet(it.map { MigrationSourceItem.fromParcelable(sourceManager, it) })
+        )?.let { parcelableList ->
+            val migrationSourceItems = ArrayList<MigrationSourceItem>()
+            parcelableList.forEach { parcelableItem ->
+                MigrationSourceItem.fromParcelable(sourceManager, parcelableItem)?.let { migrationSourceItem ->
+                    migrationSourceItems.add(migrationSourceItem)
+                }
+            }
+            updateDataSet(migrationSourceItems)
         }
 
         super.onRestoreInstanceState(savedInstanceState)

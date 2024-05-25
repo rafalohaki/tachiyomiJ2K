@@ -1,4 +1,6 @@
 import java.io.ByteArrayOutputStream
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     id(Plugins.androidApplication)
@@ -8,7 +10,6 @@ plugins {
     id(Plugins.kotlinSerialization)
     id("com.google.android.gms.oss-licenses-plugin")
     id(Plugins.googleServices) apply false
-    id("com.google.firebase.crashlytics")
 }
 
 if (gradle.startParameter.taskRequests.toString().contains("Standard")) {
@@ -56,6 +57,20 @@ android {
         }
     }
 
+    // Load properties from the signing_keys.properties file
+    val props = Properties().apply {
+        load(FileInputStream(rootProject.file("signing_keys.properties")))
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file("signingkey.jks")
+            storePassword = props.getProperty("KEY_STORE_PASSWORD")
+            keyAlias = props.getProperty("ALIAS")
+            keyPassword = props.getProperty("KEY_PASSWORD")
+        }
+    }
+
     splits {
         abi {
             isEnable = true
@@ -71,6 +86,7 @@ android {
             versionNameSuffix = "-d${getCommitCount()}"
         }
         getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             applicationIdSuffix = ".j2k"
             isShrinkResources = true
             isMinifyEnabled = true
@@ -127,17 +143,17 @@ android {
 
 dependencies {
     // Compose
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.compose.foundation:foundation:1.5.1")
-    implementation("androidx.compose.animation:animation:1.5.1")
-    implementation("androidx.compose.ui:ui:1.5.1")
-    implementation("androidx.compose.material:material:1.5.1")
-    implementation("androidx.compose.material3:material3:1.1.2")
+    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("androidx.compose.foundation:foundation:1.6.7")
+    implementation("androidx.compose.animation:animation:1.6.7")
+    implementation("androidx.compose.ui:ui:1.6.7")
+    implementation("androidx.compose.material:material:1.6.7")
+    implementation("androidx.compose.material3:material3:1.2.1")
     implementation("com.google.android.material:compose-theme-adapter-3:1.1.1")
-    implementation("androidx.compose.material:material-icons-extended:1.5.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.5.1")
-    implementation("com.google.accompanist:accompanist-webview:0.30.1")
+    implementation("androidx.compose.material:material-icons-extended:1.6.7")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.7")
+    implementation("com.google.accompanist:accompanist-webview:0.34.0")
     implementation("androidx.glance:glance-appwidget:1.0.0")
 
     // Modified dependencies
@@ -146,19 +162,22 @@ dependencies {
     }
     implementation("com.github.tachiyomiorg:image-decoder:7879b45")
 
+    // leakcanary
+    debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.14")
+
     // Android X libraries
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("com.google.android.material:material:1.10.0")
-    implementation("androidx.webkit:webkit:1.8.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.webkit:webkit:1.9.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.preference:preference:1.2.1")
-    implementation("androidx.annotation:annotation:1.7.0")
+    implementation("androidx.annotation:annotation:1.7.1")
     implementation("androidx.browser:browser:1.6.0")
     implementation("androidx.biometric:biometric:1.1.0")
     implementation("androidx.palette:palette:1.0.0")
-    implementation("androidx.activity:activity-ktx:1.8.0")
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.activity:activity-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation("androidx.window:window:1.1.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
@@ -170,9 +189,8 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:31.2.3"))
 
     implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
 
-    val lifecycleVersion = "2.6.2"
+    val lifecycleVersion = "2.7.0"
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-common:$lifecycleVersion")
@@ -185,7 +203,7 @@ dependencies {
     implementation("com.jakewharton.rxrelay:rxrelay:1.2.0")
 
     // Coroutines
-    implementation("com.fredporciuncula:flow-preferences:1.6.0")
+    implementation("com.fredporciuncula:flow-preferences:1.8.0")
 
     // Network client
     val okhttpVersion = "5.0.0-alpha.11"
@@ -204,7 +222,7 @@ dependencies {
     implementation(kotlin("reflect", version = AndroidVersions.kotlin))
 
     // JSON
-    val kotlinSerialization =  "1.6.0"
+    val kotlinSerialization =  "1.6.3"
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${kotlinSerialization}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:${kotlinSerialization}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-okio:${kotlinSerialization}")
@@ -218,11 +236,11 @@ dependencies {
     implementation("com.github.junrar:junrar:7.5.5")
 
     // HTML parser
-    implementation("org.jsoup:jsoup:1.16.1")
+    implementation("org.jsoup:jsoup:1.17.2")
 
     // Job scheduling
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
-    implementation("com.google.guava:guava:31.1-android")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("com.google.guava:guava:33.2.0-android")
 
     implementation("com.google.android.gms:play-services-gcm:17.0.0")
 
@@ -241,7 +259,7 @@ dependencies {
     implementation("com.github.inorichi.injekt:injekt-core:65b0440")
 
     // Image library
-    val coilVersion = "2.4.0"
+    val coilVersion = "2.6.0"
     implementation("io.coil-kt:coil:$coilVersion")
     implementation("io.coil-kt:coil-gif:$coilVersion")
     implementation("io.coil-kt:coil-svg:$coilVersion")
@@ -255,7 +273,7 @@ dependencies {
     // UI
     implementation("com.dmitrymalkovich.android:material-design-dimens:1.4")
     implementation("br.com.simplepass:loading-button-android:2.2.0")
-    val fastAdapterVersion = "5.6.0"
+    val fastAdapterVersion = "5.7.0"
     implementation("com.mikepenz:fastadapter:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-binding:$fastAdapterVersion")
     implementation("com.github.arkon.FlexibleAdapter:flexible-adapter:c8013533")
@@ -270,7 +288,7 @@ dependencies {
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
 
     // Conductor
-    val conductorVersion = "4.0.0-preview-3"
+    val conductorVersion = "4.0.0-preview-4"
     implementation("com.bluelinelabs:conductor:$conductorVersion")
     implementation("com.github.tachiyomiorg:conductor-support-preference:3.0.0")
 
@@ -281,7 +299,7 @@ dependencies {
 
     implementation(kotlin("stdlib", org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION))
 
-    val coroutines = "1.7.3"
+    val coroutines = "1.8.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines")
 

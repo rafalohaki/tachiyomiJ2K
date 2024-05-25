@@ -97,7 +97,7 @@ class RepoController(bundle: Bundle? = null) :
     override fun handleBack(): Boolean {
         view?.clearFocus()
         confirmDelete()
-        return super.handleBack()
+        return true
     }
 
     /**

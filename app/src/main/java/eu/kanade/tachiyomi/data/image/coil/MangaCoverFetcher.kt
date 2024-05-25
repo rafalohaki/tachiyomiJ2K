@@ -247,7 +247,7 @@ class MangaCoverFetcher(
             diskCacheLazy.value.fileSystem.write(editor.data) {
                 response.body!!.source().readAll(this)
             }
-            return editor.commitAndGet()
+            return editor.commitAndOpenSnapshot()
         } catch (e: Exception) {
             try {
                 editor.abort()

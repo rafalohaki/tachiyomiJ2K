@@ -48,6 +48,7 @@ object SecureActivityDelegate {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                     activity.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, 0, 0)
                 } else {
+                    @Suppress("DEPRECATION")
                     activity.overridePendingTransition(0, 0)
                 }
             }

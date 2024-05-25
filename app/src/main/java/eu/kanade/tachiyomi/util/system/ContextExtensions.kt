@@ -136,10 +136,10 @@ val Int.dpToPx: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
 val Int.spToPx: Int
-    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).toInt()
+    get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
 val Float.dpToPx: Float
-    get() = (this * Resources.getSystem().displayMetrics.density)
+    get() = this * Resources.getSystem().displayMetrics.density
 
 /** Converts to px and takes into account LTR/RTL layout */
 fun Float.dpToPxEnd(resources: Resources): Float {
@@ -149,7 +149,7 @@ fun Float.dpToPxEnd(resources: Resources): Float {
 val Resources.isLTR
     get() = configuration.layoutDirection == View.LAYOUT_DIRECTION_LTR
 
-fun Context.isTablet() = resources.configuration.smallestScreenWidthDp >= 600
+fun Context.isTablet(): Boolean = resources.configuration.smallestScreenWidthDp >= 600
 
 val displayMaxHeightInPx: Int
     get() = Resources.getSystem().displayMetrics.let { max(it.heightPixels, it.widthPixels) }

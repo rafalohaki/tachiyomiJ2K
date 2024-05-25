@@ -147,7 +147,7 @@ class ExtensionDetailsController(bundle: Bundle? = null) :
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        lastOpenPreferencePosition = savedInstanceState.get(LASTOPENPREFERENCE_KEY) as? Int
+        lastOpenPreferencePosition = savedInstanceState.getInt(LASTOPENPREFERENCE_KEY, -1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

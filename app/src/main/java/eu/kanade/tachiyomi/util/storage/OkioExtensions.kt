@@ -11,16 +11,18 @@ import java.io.OutputStream
  *
  * @param file the file where the source is copied.
  */
-fun BufferedSource.saveTo(file: File) {
+fun BufferedSource.saveTo(file: File?) {
     try {
         // Create parent dirs if needed
-        file.parentFile.mkdirs()
+        file?.parentFile?.mkdirs()
 
         // Copy to destination
-        saveTo(file.outputStream())
+        file?.outputStream()?.use { outputStream ->
+            saveTo(outputStream)
+        }
     } catch (e: Exception) {
         close()
-        file.delete()
+        file?.delete()
         throw e
     }
 }

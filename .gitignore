@@ -7,3 +7,6 @@
 *iml
 *.iml
 */build
+signingkey.jks
+signing_keys.properties
+local.properties
